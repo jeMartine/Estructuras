@@ -1,0 +1,83 @@
+territorio_noroccidental kamchatka alberta
+vc
+alaska territorio_noroccidental ontario estados_unidos_occidentales
+vc
+estados_unidos_occidentales estados_unidos_orientales colombia
+vc
+estados_unidos_occidentales ontario quebec america_central 
+vc
+territorio_noroccidental ontario quebec islandia 
+vc
+alaska alberta ontario groenlandia 
+vc
+territorio_noroccidental alberta estados_unidos_occidentales estados_unidos_orientales quebec
+vc
+groenlandia ontario estados_unidos_orientales
+vc
+alberta ontario estados_unidos_orientales america_central
+cc
+peru brasil
+vc
+colombia peru argentina africa_del_norte
+vc
+colombia brasil argentina
+vc
+peru brasil america_central
+cc
+europa_occidental europa_del_norte escandinavia islandia
+vc
+groenlandia escandinavia gran_bretana
+vc
+escandinavia gran_bretana europa_occidental europa_del_sur ucrania
+vc
+islandia gran_bretana europa_del_norte ucrania
+vc
+ucrania europa_del_norte europa_occidental africa_del_norte egipto medio_oriente
+vc
+escandinavia europa_del_norte europa_del_sur medio_oriente Aafghanistan ural
+vc
+gran_bretana europa_del_norte europa_del_sur africa_del_norte
+cc
+africa_del_norte africa_oriental africa_del_sur
+vc
+egipto africa_del_norte congo africa_del_sur madagascar
+vc
+africa_del_norte africa_oriental europa_del_sur medio_oriente
+vc
+africa_oriental africa_del_sur
+vc
+brasil congo africa_oriental egipto europa_occidental europa_del_sur
+vc
+congo africa_oriental madagascar
+cc
+ural china india medio_oriente ucrania
+vc
+mongolia Aafghanistan siberia ural india siam
+vc
+medio_oriente Aafghanistan china siam
+vc
+kamchatka yakutsk siberia mongolia
+vc
+kamchatka mongolia
+vc
+yakutsk irkutsk mongolia japon alaska
+vc
+Aafghanistan india ucrania europa_del_sur egipto
+vc
+japon kamchatka irkutsk siberia china
+vc
+china india indonesia
+vc
+yakutsk irkutsk mongolia china ural
+vc
+siberia Aafghanistan ucrania
+vc
+kamchatka irkutsk siberia
+cc
+australia_occidental nueva_guinea
+vc
+nueva_guinea australia_occidental siam
+vc
+indonesia australia_occidental australia_oriental
+vc
+indonesia nueva_guinea australia_oriental
