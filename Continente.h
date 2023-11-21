@@ -26,6 +26,7 @@ public:
    // void agregarVecino(int territorio, std::string nombreVecino);
     //std::vector<std::string> mostrarVecinos(int territorio);
     void eliminarFichaTerritorio(int terri);
+    Territorio buscarId(int id);
 private:
     std::string nombre;
     std::vector<Territorio> territorios;

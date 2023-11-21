@@ -74,6 +74,9 @@ public:
     std::string getColorJugador(int indice);
     std::string getNombreJugador(int indice);
     void agregarCartaJugador(std::string terri, std::string tropa, int indJugador);
+    int idTerritorio(int iContinente, std::string territorio);
+    Territorio buscarId(int idTerri);
+  
 
 private:
     std::vector<Jugador> jugadores;

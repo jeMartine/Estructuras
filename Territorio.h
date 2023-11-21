@@ -11,6 +11,7 @@ public:
 
     void addFicha(Ficha ficha);
     void deleteFicha();
+    int getId();
     //Ficha GetFicha( std::string jugador);
     bool ChekFicha( std::string jugador);
     void setReclamar( std::string jugador);
@@ -18,7 +19,6 @@ public:
     int GetQFichas();
     std::string getNombre();
     std::string getReclamado();
-    int getIdterritorio();
 
 private:
     std::string nombre;

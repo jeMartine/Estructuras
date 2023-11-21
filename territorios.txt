@@ -1,32 +1,32 @@
 1,alaska
 2,alberta
-3,america_central
-4,estados_unidos_orientales
+3,america central
+4,estados unidos orientales
 5,groenlandia
-6,territorio_noroccidental
+6,territorio noroccidental
 7,ontario
 8,quebec
-9,estados_unidos_occidentales
+9,estados unidos occidentales
 0,cambio
 10,argentina
 11,brasil
 12,peru
 13,colombia
 0,cambio
-14,gran_bretana
+14,gran bretana
 15,islandia
-16,europa_del_norte
+16,europa del norte
 17,escandinavia
-18,europa_del_sur
+18,europa del sur
 19,ucrania
-20,europa_occidental
+20,europa occidental
 0,cambio
 21,congo
-22,africa_oriental
+22,africa oriental
 23,egipto
 24,madagascar
-25,africa_del_norte
-26,africa_del_sur
+25,africa del norte
+26,africa del sur
 0,cambio
 27,afghanistan
 28,china
@@ -34,14 +34,14 @@
 30,irkutsk
 31,japon
 32,kamchatka
-33,medio_oriente
+33,medio oriente
 34,mongolia
 35,siam
 36,siberia
 37,ural
 38,yakutsk
 0,cambio
-39,australia_oriental
+39,australia oriental
 40,indonesia
-41,nueva_guinea
-42,australia_occidental
+41,nueva guinea
+42,australia occidental

@@ -48,21 +48,39 @@ void Risk::agregarTerritorio(int continente, std::string nombreTerritorio, int i
   continentes[continente].AddTerritorio(nombreTerritorio, id);
 }
 
-void Risk::agregarVecinoTerritorio(int continente, int territorio, std::string nombreVecino)
-{
-  continentes[continente].agregarVecino(territorio, nombreVecino);
+// void Risk::agregarVecinoTerritorio(int continente, int territorio, std::string nombreVecino)
+// {
+//   continentes[continente].agregarVecino(territorio, nombreVecino);
+// }
+
+// void Risk::mostrarVecinosTerritorio(int conti, int terri)
+// {
+//   std::vector<std::string> vecinos = continentes[conti].mostrarVecinos(terri);
+//   // recorro los vecinos
+//   for (int i = 0; i < vecinos.size(); i++)
+//   {
+//     if (!territorioJugador(buscarContinenteTerritorio(vecinos[i]), vecinos[i]))
+//       std::cout << i + 1 << buscarFichasTerritorio(vecinos[i]) << std::endl;
+//   }
+// }
+
+
+Territorio Risk::buscarId(int idTerri){
+  int conti=0;
+  if(idTerri>=10 && idTerri<=13)
+    conti =1;
+  else if(idTerri>=14 && idTerri<=20)
+    conti =2;
+  else if(idTerri>=21 && idTerri<=26)
+    conti = 3;
+  else if(idTerri>=27 && idTerri<=38)
+    conti =4;
+  else if(idTerri>=39 && idTerri<=42)
+    conti = 5;
+
+  return continentes[conti].buscarId(idTerri);
 }
 
-void Risk::mostrarVecinosTerritorio(int conti, int terri)
-{
-  std::vector<std::string> vecinos = continentes[conti].mostrarVecinos(terri);
-  // recorro los vecinos
-  for (int i = 0; i < vecinos.size(); i++)
-  {
-    if (!territorioJugador(buscarContinenteTerritorio(vecinos[i]), vecinos[i]))
-      std::cout << i + 1 << buscarFichasTerritorio(vecinos[i]) << std::endl;
-  }
-}
 
 // retorna una cadena de caracteres con el nombre del territorio y la cantidad de fichas que pose este territorio
 std::string Risk::buscarFichasTerritorio(std::string terri)
@@ -112,15 +130,15 @@ bool Risk::deleteFichaTerritorio(std::string terri){
   return false;
 }
 
-bool Risk::validarDefensa(int indContiente, int indterritorio, std::string territorio)
-{
-  std::vector<std::string> vecinos = continentes[indContiente].mostrarVecinos(indterritorio);
-  for(int i=0; i<vecinos.size();i++){
-    if(territorio==vecinos[i])
-      return true;
-  }
-  return false;
-}
+// bool Risk::validarDefensa(int indContiente, int indterritorio, std::string territorio)
+// {
+//   std::vector<std::string> vecinos = continentes[indContiente].mostrarVecinos(indterritorio);
+//   for(int i=0; i<vecinos.size();i++){
+//     if(territorio==vecinos[i])
+//       return true;
+//   }
+//   return false;
+// }
 
 
 void Risk::crearContinente()
@@ -277,7 +295,7 @@ std::string Risk::infoJug()
 {
   std::string retorno = "";
 
-  retorno = jugadores[0].obtenerNombreJugador() + " : " + std::to_string(jugadores[0].obeterTotalFichas());
+  std::cout<<jugadores[turnoActual].obtenerNombreJugador() + " : " + std::to_string(jugadores[turnoActual].obeterTotalFichas())<<std::endl;
   return retorno;
 }
 
@@ -410,6 +428,21 @@ int Risk::indiceTerritorio(int iContinente, std::string territorio)
   return -1;
 }
 
+
+// busca en el vector de territorio todos los indices
+int Risk::idTerritorio(int iContinente, std::string territorio)
+{
+  for (int i = 0; i < continentes[iContinente].cantidadTerritorios(); i++)
+  {
+    if (continentes[iContinente].getNombreTerritorio(i) == territorio)
+    {
+      return continentes[iContinente].getIdTerritorio(i);
+    }
+  }
+  return -1;
+}
+
+
 // indica si todos los territorios de todos los continentes han sido ocupados
 bool Risk::territoriosLibres()
 {
@@ -432,7 +465,6 @@ std::string Risk::territoriosJugador()
 {
   std::string retorno = "";
   int contador = 0;
-
   for (int i = 0; i < continentes.size(); i++)
   {
     for (int terri = 0; terri < continentes[i].cantidadTerritorios(); terri++)

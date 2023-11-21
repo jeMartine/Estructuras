@@ -46,7 +46,7 @@ std::string Territorio::getNombre()
     return nombre;
 }
 
-int Territorio::getIdterritorio()
+int Territorio::getId()
 {
     return id;
 }
