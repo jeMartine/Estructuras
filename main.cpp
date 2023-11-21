@@ -8,6 +8,8 @@
 #include <sstream>
 
 #include "Risk.h"
+#include "ArbolHuffman.h"
+#include "Grafo.h"
 
 using namespace std;
 
@@ -31,7 +33,7 @@ void inicializarJuego(Risk *risk);
 void fortificar(Risk *risk, bool inicializar);
 void turno(map<int, vector<int>> &relaciones, Risk *risk);
 
-void leerBinario(Risk *risk, string nombre_archivo);
+pair< map<int,int>, string > leerBinario(const string& nombreArchivo);
 void crearCartas(Risk *risk, const std::string &filename);
 void poblarTerritorios(Risk *risk, const std::string &filename);
 void poblarVecinos(map<int, vector<int>> &relaciones, const std::string &filename);
@@ -45,6 +47,8 @@ bool esVecino(vector<Territorio> vecinos, string nombre);
 
 // entrega 3
 void costoConquista(Risk *risk, map<int, vector<int>> &relaciones, string pais);
+void construir_arbol(string nombreArchivo, string nombreArchivoBinario);
+void cargar_arbol(string nombreArchivo);
 
 int main()
 {
@@ -77,7 +81,7 @@ int main()
   string turnoAux;
   // indica si hay algún ganador
   int ganador = -1;
-  string adicional="";
+  string adicional = "";
 
   do
   {
@@ -87,12 +91,45 @@ int main()
     switch (valor)
     {
     // inicializar con archivo
+    // se debe identificar si es txt o binario.
     case 1:
     {
       risk.iniciarPartida();
       string nombreArchivo = separarEspacio(respuesta, true);
+      string ultimosCuatro;
+      // Obtener la longitud del string
+      size_t longitud = nombreArchivo.length();
 
-      poblarJuego(&risk, leerArchivo(nombreArchivo));
+      // Leer los últimos 4 caracteres
+      if (longitud >= 4)
+      {
+        ultimosCuatro = nombreArchivo.substr(longitud - 4);
+       
+      }
+      else
+      {
+        cout << "El nombre del archivo es muy corto." << endl;
+      }
+
+      if (ultimosCuatro == ".txt")
+      {
+        poblarJuego(&risk, leerArchivo(nombreArchivo));
+        cout<<"Se ha restaurado la partida "<<nombreArchivo<<" :)\n";
+      }
+      else if (ultimosCuatro == ".bin")
+      {
+        cout << "Archivo con extension .bin" << endl;
+        cargar_arbol(nombreArchivo);
+        string archDeco="Decodificado.txt";
+        poblarJuego(&risk, leerArchivo(archDeco));
+        cout<<"Se ha restaurado la partida "<<nombreArchivo<<" :)\n";
+      }
+      else
+      {
+        cout << "Debe ingresar un formato valido (.txt o .bin)\n";
+      }
+        
+
     }
     break;
     // inicializar
@@ -141,28 +178,35 @@ int main()
     case 5:
     {
       string nombreArchivo = separarEspacio(respuesta, true);
-      nombreArchivo+=".txt";
-      risk.guardarPartida();
+      nombreArchivo += ".txt";
+      // risk.guardarPartida();
       crearArchivo(nombreArchivo, risk.guardarPartida());
     }
     break;
+
       // guardar_comprimido <nombre_archivo>
+
     case 6:
     {
-      string nombreArchivo = separarEspacio(respuesta, true);
-      map<char, int> frecuencia = contarFrecuencia(nombreArchivo);
+      // string nombreArchivo = separarEspacio(respuesta, true);
+      // map<char, int> frecuencia = contarFrecuencia(nombreArchivo);
 
-      std::cout << "Frecuencia de caracteres:" << std::endl;
-      for (const auto &par : frecuencia)
-      {
-        std::cout << par.first << ": " << par.second << std::endl;
-      }
-      cout << "Caracteres por orden de menor frecuencia:" << endl;
-      while (!frecuencia.empty())
-      {
-        char caracter = MenorFrecuencia(frecuencia);
-        cout << "Caracter: " << caracter << ", Frecuencia: " << frecuencia[caracter] << endl;
-      }
+      // std::cout << "Frecuencia de caracteres:" << std::endl;
+      // for (const auto &par : frecuencia)
+      // {
+      //   std::cout << par.first << ": " << par.second << std::endl;
+      // }
+      // cout << "Caracteres por orden de menor frecuencia:" << endl;
+      // while (!frecuencia.empty())
+      // {
+      //   char caracter = MenorFrecuencia(frecuencia);
+      //   cout << "Caracter: " << caracter << ", Frecuencia: " << frecuencia[caracter] << endl;
+      // }
+
+      adicional = separarEspacio(respuesta, true);
+      adicional += ".bin";
+      crearArchivo("saveBin.txt", risk.guardarPartida());
+      construir_arbol("saveBin.txt", adicional);
     }
     break;
       // costo_conquista <territorio>
@@ -178,7 +222,7 @@ int main()
       }
       else
       {
-        costoConquista(&risk ,relaciones, adicional);
+        costoConquista(&risk, relaciones, adicional);
       }
 
       break;
@@ -220,50 +264,50 @@ int main()
 
 // permite crear un archivo
 
-void guardarBinario(Risk risk, string nombre_archivo)
+pair< map<int,int>, string > leerBinario(const string& nombreArchivo) 
 {
-  bool logro = true;
-  ofstream archivo;
+    ifstream archivo(nombreArchivo, ios::binary);
 
-  do
-  {
-    archivo.open(nombre_archivo, ios::out);
+    //Guarda toda la información del archivo en un string
+    string str((istreambuf_iterator<char>(archivo)), istreambuf_iterator<char>());
 
-    if (archivo.is_open())
-    {
-      archivo.write(reinterpret_cast<char *>(&risk), sizeof(Risk));
-      archivo.close();
+    //n
+    string n = str.substr(0, 16);
+    bitset<16> twoByteRepresentation(n);
+    int value = twoByteRepresentation.to_ulong();
+    //cout << "n: " << value << endl;
+    str.erase(0, 16);
+
+    //ci y fi
+    map<int, int> frecuencias;
+    for (int i = 0; i < value; i++) {
+        string ascii = str.substr(0, 8);
+        bitset<8> asciiBit(ascii);
+        int asciiInt = asciiBit.to_ulong();
+        str.erase(0, 8);
+
+        string freq = str.substr(0, 64);
+        bitset<64> freqBit(freq);
+        int freqInt = freqBit.to_ulong();
+        str.erase(0, 64);
+
+        frecuencias[asciiInt] = freqInt;
     }
-    else
-    {
-      cout << "Error, el archivo no abrió";
-      logro = false;
-    }
-  } while (!logro);
+
+    //w
+    string w = str.substr(0, 64);
+    bitset<64> wBit(w);
+    int wInt = wBit.to_ulong();
+    //cout << "w: " << wInt << endl;
+    str.erase(0, 64);
+
+
+
+    archivo.close();
+
+    return make_pair(frecuencias, str);
 }
 
-void leerBinario(Risk *risk, string nombre_archivo)
-{
-
-  bool logro = true;
-  ifstream archivo;
-
-  do
-  {
-    archivo.open(nombre_archivo, ios::in);
-
-    if (archivo.is_open())
-    {
-      archivo.read(reinterpret_cast<char *>(risk), sizeof(Risk));
-      archivo.close();
-    }
-    else
-    {
-      cout << "Error, el archivo no abrió";
-      logro = false;
-    }
-  } while (!logro);
-}
 
 void crearArchivo(std::string nombreArchivo, std::string contenido)
 {
@@ -1043,11 +1087,45 @@ char MenorFrecuencia(std::map<char, int> &frecuencia)
   return caracterMenorFrecuencia;
 }
 
+// Huffman
+void construir_arbol(string nombreArchivo, string nombreArchivoBinario)
+{
+  ArbolHuffman arbol;
+  ifstream archivo(nombreArchivo);
+  string texto((istreambuf_iterator<char>(archivo)), istreambuf_iterator<char>());
+  arbol.construirArbol(texto);
+  arbol.codificar();
+  cout << "----------------------------------------" << endl;
+  cout << "Arbol de Huffman creado con exito." << endl;
+
+  string strCodificada;
+  for (char ch : texto)
+  {
+    strCodificada += arbol.codigoHuffman[ch];
+  }
+
+  arbol.guardarEnArchivoBinario(strCodificada, nombreArchivoBinario);
+  cout << "Arbol de Huffman guardado en archivo binario." << endl;
+}
+
+void cargar_arbol(string nombreArchivo)
+{
+
+  cout << "----------------------------------------\n";
+  pair<map<int, int>, string> resultado = leerBinario(nombreArchivo);
+  ArbolHuffman arbol;
+  map<int, int> frecuencias = resultado.first;
+  string strCodificada = resultado.second;
+  arbol.reconstruirArbol(frecuencias);
+  cout << "Árbol de Huffman cargado desde archivo binario.\n";
+  cout << "Decodificando...\n";
+  arbol.decodificar(strCodificada);
+}
+
 // Entrega 3 Estrategias de juego
 
 void costoConquista(Risk *risk, map<int, vector<int>> &relaciones, string pais)
 {
 
-  cout <<"Para conquistar el territorio "<<pais<<", debe atacar desde <territorio_1>,pasando por los territorios <territorio_2>, <territorio_3>, ..., <territorio_m>. Debe conquistar <n> unidades de ejército.";
-
+  cout << "Para conquistar el territorio " << pais << ", debe atacar desde <territorio_1>,pasando por los territorios <territorio_2>, <territorio_3>, ..., <territorio_m>. Debe conquistar <n> unidades de ejército.";
 }

@@ -1,0 +1,41 @@
+3
+jorge
+esteban
+martinez
+TTR
+alaska 2
+alberta 2
+groenlandia 2
+ontario 2
+quebec 2
+argentina 2
+brasil 2
+peru 1
+colombia 2
+ucrania 2
+china 23
+japon 2
+mongolia 2
+ural 2
+indonesia 2
+TTR
+escandinavia 1
+egipto 1
+india 36
+kamchatka 1
+siam 1
+yakutsk 1
+TTR
+islandia 1
+congo 1
+madagascar 1
+afghanistan 1
+irkutsk 1
+siberia 1
+TTR
+CAR
+mongolia infanteria
+CAR
+japon artilleria
+CAR
+CAR

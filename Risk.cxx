@@ -591,7 +591,7 @@ std::string Risk::guardarPartida()
     mensaje+="CAR\n";           
   }
 
-  std::cout<<mensaje<<std::endl;
+
   return mensaje;
 }
 

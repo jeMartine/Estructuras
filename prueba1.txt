@@ -1,0 +1,54 @@
+3
+jorge
+esteban
+martinez
+TTR
+alaska 1
+estados_unidos_orientales 1
+ontario 1
+argentina 1
+colombia 1
+europa_del_norte 1
+ucrania 1
+africa_oriental 1
+africa_del_norte 1
+china 22
+japon 1
+mongolia 1
+ural 1
+indonesia 1
+TTR
+alberta 1
+groenlandia 1
+quebec 1
+brasil 1
+gran_bretana 1
+escandinavia 1
+europa_occidental 1
+egipto 1
+africa_del_sur 1
+india 1
+kamchatka 1
+siam 22
+yakutsk 1
+nueva_guinea 1
+TTR
+america_central 1
+territorio_noroccidental 1
+estados_unidos_occidentales 1
+peru 22
+islandia 1
+europa_del_sur 1
+congo 1
+madagascar 1
+afghanistan 1
+irkutsk 1
+medio_oriente 1
+siberia 1
+australia_oriental 1
+australia_occidental 1
+TTR
+CAR
+CAR
+CAR
+CAR
