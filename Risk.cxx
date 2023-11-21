@@ -48,22 +48,6 @@ void Risk::agregarTerritorio(int continente, std::string nombreTerritorio, int i
   continentes[continente].AddTerritorio(nombreTerritorio, id);
 }
 
-// void Risk::agregarVecinoTerritorio(int continente, int territorio, std::string nombreVecino)
-// {
-//   continentes[continente].agregarVecino(territorio, nombreVecino);
-// }
-
-// void Risk::mostrarVecinosTerritorio(int conti, int terri)
-// {
-//   std::vector<std::string> vecinos = continentes[conti].mostrarVecinos(terri);
-//   // recorro los vecinos
-//   for (int i = 0; i < vecinos.size(); i++)
-//   {
-//     if (!territorioJugador(buscarContinenteTerritorio(vecinos[i]), vecinos[i]))
-//       std::cout << i + 1 << buscarFichasTerritorio(vecinos[i]) << std::endl;
-//   }
-// }
-
 
 Territorio Risk::buscarId(int idTerri){
   int conti=0;

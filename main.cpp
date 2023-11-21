@@ -35,13 +35,16 @@ void leerBinario(Risk *risk, string nombre_archivo);
 void crearCartas(Risk *risk, const std::string &filename);
 void poblarTerritorios(Risk *risk, const std::string &filename);
 void poblarVecinos(map<int, vector<int>> &relaciones, const std::string &filename);
-void atacar(map<int, vector<int>> &relaciones,Risk *risk);
+void atacar(map<int, vector<int>> &relaciones, Risk *risk);
 vector<string> leerArchivo(std::string &filename);
 void poblarJuego(Risk *risk, vector<string> cadena);
 
 std::map<char, int> contarFrecuencia(const std::string &cadena);
 char MenorFrecuencia(std::map<char, int> &frecuencia);
 bool esVecino(vector<Territorio> vecinos, string nombre);
+
+// entrega 3
+void costoConquista(Risk *risk, map<int, vector<int>> &relaciones, string pais);
 
 int main()
 {
@@ -55,11 +58,9 @@ int main()
   poblarTerritorios(&risk, "territorios.txt");
   poblarVecinos(relaciones, "vecinosTerritorios.txt");
 
-    vector<int> lista = relaciones[1];
-    for(int i =0; i<lista.size(); i++)
-      cout<<lista[i]<<endl;
-  
-
+  vector<int> lista = relaciones[1];
+  for (int i = 0; i < lista.size(); i++)
+    cout << lista[i] << endl;
 
   // matriz con
   // guarda la cadena ingresada por el usuario
@@ -76,6 +77,7 @@ int main()
   string turnoAux;
   // indica si hay algún ganador
   int ganador = -1;
+  string adicional="";
 
   do
   {
@@ -139,7 +141,8 @@ int main()
     case 5:
     {
       string nombreArchivo = separarEspacio(respuesta, true);
-      // risk.guardarPartida();
+      nombreArchivo+=".txt";
+      risk.guardarPartida();
       crearArchivo(nombreArchivo, risk.guardarPartida());
     }
     break;
@@ -164,8 +167,20 @@ int main()
     break;
       // costo_conquista <territorio>
     case 7:
-      cout << "comando exitoso\n"
-           << "costo_conquista <territorio>\n";
+      adicional = separarEspacio(respuesta, true);
+      if (!risk.estadoPartida())
+      {
+        cout << "-** Esta partida no ha sido inicializada correctamente **-\n";
+      }
+      else if (risk.estadoGanador())
+      {
+        cout << "-** Esta partida ya tuvo un ganador **-\n";
+      }
+      else
+      {
+        costoConquista(&risk ,relaciones, adicional);
+      }
+
       break;
       // conquista_mas_barata
     case 8:
@@ -612,7 +627,7 @@ void turno(map<int, vector<int>> &relaciones, Risk *risk)
   risk->turnoJugado();
 }
 
-void atacar(map<int, vector<int>> &relaciones, Risk *risk )
+void atacar(map<int, vector<int>> &relaciones, Risk *risk)
 {
   string ataque = "";
   string contiAcaque = "";
@@ -622,7 +637,7 @@ void atacar(map<int, vector<int>> &relaciones, Risk *risk )
   int dadosAtacante[3] = {0};
   int dadosDefensor = 0;
   int totalDadosAtaque = 0;
-  int idTerritorio=0;
+  int idTerritorio = 0;
   int dado1 = -1;
   int dado2 = -1;
   bool salir = false;
@@ -654,29 +669,30 @@ void atacar(map<int, vector<int>> &relaciones, Risk *risk )
   vector<int> lista_adyacentes = relaciones[idTerritorio];
   std::vector<Territorio> paisesCerca;
 
-  for(int i=0; i<lista_adyacentes.size(); i++){
-      paisesCerca.push_back(risk->buscarId(lista_adyacentes[i]));
+  for (int i = 0; i < lista_adyacentes.size(); i++)
+  {
+    paisesCerca.push_back(risk->buscarId(lista_adyacentes[i]));
   }
 
-  for (int i =0; i<paisesCerca.size(); i++){
-    cout<<i+1 <<". "<<paisesCerca[i].getNombre()<<"- F: "<<paisesCerca[i].GetQFichas()<<endl;
+  for (int i = 0; i < paisesCerca.size(); i++)
+  {
+    cout << i + 1 << ". " << paisesCerca[i].getNombre() << "- F: " << paisesCerca[i].GetQFichas() << endl;
   }
 
-    do
+  do
+  {
+    defensa = ingresarComando();
+
+    if (defensa == "" || !esVecino(paisesCerca, defensa))
     {
-      defensa = ingresarComando();
+      cout << "\n-** Nombre de territorio no valido **-\n";
+    }
+  } while (defensa == "" || !esVecino(paisesCerca, defensa));
 
-      if (defensa == "" || !esVecino(paisesCerca, defensa))
-      {
-        cout << "\n-** Nombre de territorio no valido **-\n";
-      }
-    } while (defensa == "" || !esVecino(paisesCerca, defensa));
+  // lanzar dados
+  // jugada
+  // ataca =3 dados, defiende = 2
 
-    // lanzar dados
-    // jugada
-    // ataca =3 dados, defiende = 2
-
-    
   srand(time(NULL));
   do
   {
@@ -768,10 +784,12 @@ void atacar(map<int, vector<int>> &relaciones, Risk *risk )
   } while (salir == false);
 }
 
-//indica si un pais es vecino de otro 
-bool esVecino(vector<Territorio> vecinos, string nombre){
-  for(int i=0; i<vecinos.size(); i++){
-    if(vecinos[i].getNombre()==nombre)
+// indica si un pais es vecino de otro
+bool esVecino(vector<Territorio> vecinos, string nombre)
+{
+  for (int i = 0; i < vecinos.size(); i++)
+  {
+    if (vecinos[i].getNombre() == nombre)
       return true;
   }
   return false;
@@ -1023,4 +1041,13 @@ char MenorFrecuencia(std::map<char, int> &frecuencia)
   frecuencia.erase(caracterMenorFrecuencia);
 
   return caracterMenorFrecuencia;
+}
+
+// Entrega 3 Estrategias de juego
+
+void costoConquista(Risk *risk, map<int, vector<int>> &relaciones, string pais)
+{
+
+  cout <<"Para conquistar el territorio "<<pais<<", debe atacar desde <territorio_1>,pasando por los territorios <territorio_2>, <territorio_3>, ..., <territorio_m>. Debe conquistar <n> unidades de ejército.";
+
 }
