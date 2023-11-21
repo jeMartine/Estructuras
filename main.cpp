@@ -34,7 +34,7 @@ void turno(Risk *risk);
 void leerBinario(Risk *risk, string nombre_archivo);
 void crearCartas(Risk *risk, const std::string &filename);
 void poblarTerritorios(Risk *risk, const std::string &filename);
-void poblarVecinos(Risk *risk, const std::string &filename);
+void poblarVecinos(map<int, vector<int>> &relaciones, const std::string &filename);
 void atacar(Risk *risk);
 vector<string> leerArchivo(std::string &filename);
 void poblarJuego(Risk *risk, vector<string> cadena);
@@ -46,10 +46,8 @@ int main()
 {
   // instancia para la clase risk
   Risk risk;
-  risk.crearContinente();
-  crearCartas(&risk, "CartasJuego.txt");
-  poblarTerritorios(&risk, "territorios.txt");
-  poblarVecinos(&risk, "vecinosTerritorios.txt");
+  // matriz con
+  map<int, vector<int>> relaciones;
   // guarda la cadena ingresada por el usuario
   string respuesta;
   // mensaje de bienvenida
@@ -64,6 +62,11 @@ int main()
   string turnoAux;
   // indica si hay algún ganador
   int ganador = -1;
+
+  risk.crearContinente();
+  crearCartas(&risk, "CartasJuego.txt");
+  poblarTerritorios(&risk, "territorios.txt");
+  poblarVecinos(relaciones, "vecinosTerritorios.txt");
 
   do
   {
@@ -634,22 +637,25 @@ void atacar(Risk *risk)
   indContinete = risk->indiceContinente(contiAcaque);
   indTerritorio = risk->indiceTerritorio(indContinete, ataque);
 
-  cout << "\nSelecciona para atacar\n";
-  risk->mostrarVecinosTerritorio(indContinete, indTerritorio);
+  /*
+    cout << "\nSelecciona para atacar\n";
+    risk->mostrarVecinosTerritorio(indContinete, indTerritorio);
 
-  do
-  {
-    defensa = ingresarComando();
-
-    if (defensa == "" || !risk->validarDefensa(indContinete, indTerritorio, defensa))
+    do
     {
-      cout << "\n-** Nombre de territorio no valido **-\n";
-    }
-  } while (defensa == "" || !risk->validarDefensa(indContinete, indTerritorio, defensa));
+      defensa = ingresarComando();
 
-  // lanzar dados
-  // jugada
-  // ataca =3 dados, defiende = 2
+      if (defensa == "" || !risk->validarDefensa(indContinete, indTerritorio, defensa))
+      {
+        cout << "\n-** Nombre de territorio no valido **-\n";
+      }
+    } while (defensa == "" || !risk->validarDefensa(indContinete, indTerritorio, defensa));
+
+    // lanzar dados
+    // jugada
+    // ataca =3 dados, defiende = 2
+
+    */
   srand(time(NULL));
   do
   {
@@ -804,15 +810,17 @@ void poblarTerritorios(Risk *risk, const std::string &filename)
         risk->agregarTerritorio(continente, nombre, id);
       if (nombre == "cambio")
         continente++;
+    }
+    input.close();
   }
-  input.close();
-}
 }
 
-void poblarVecinos(Risk *risk, const std::string &filename)
+void poblarVecinos(map<int, vector<int>> &relaciones, const std::string &filename)
 {
   int continente = 0;
   int terri = 0;
+  string line;
+
   vector<string> vecinos;
   ifstream input(filename.c_str());
   if (!input)
@@ -821,33 +829,32 @@ void poblarVecinos(Risk *risk, const std::string &filename)
   }
   else
   {
-    while (!input.eof())
+    while (getline(input, line))
     {
-      string lectura;
-      input >> lectura;
+      istringstream iss(line);
+      int country_id;
+      char delimiter;
 
-      for (int i = 0; i < lectura.length(); i++)
+      // Leer el ID del país
+      if (!(iss >> country_id >> delimiter))
       {
-        if (lectura[i] == '_')
-          lectura[i] = ' ';
+        continue; // Si no se puede leer el ID, ignora la línea
       }
 
-      if (lectura != "vc")
+      // Leer los IDs de los países adyacentes y almacenarlos en el vector
+      string connection_ids;
+      getline(iss, connection_ids);
+      istringstream connection_stream(connection_ids);
+      int id;
+
+      // Leer cada ID de los países adyacentes separados por comas
+      while (connection_stream >> id)
       {
-        if (lectura != "cc")
+        relaciones[country_id].push_back(id);
+        if (connection_stream.peek() == ',')
         {
-          risk->agregarVecinoTerritorio(continente, terri, lectura);
+          connection_stream.ignore();
         }
-      }
-
-      if (lectura == "vc")
-      {
-        terri++;
-      }
-      if (lectura == "cc")
-      {
-        continente++;
-        terri = 0;
       }
     }
     input.close();

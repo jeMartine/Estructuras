@@ -51,20 +51,3 @@ int Territorio::getIdterritorio()
     return id;
 }
 
-void Territorio::agregarVecino(std::string tNombre)
-{
-    territoriosVecinos.push_back(tNombre);
-}
-
-std::vector<std::string> Territorio::getVecinos()
-{
-    return territoriosVecinos;
-}
-
-void Territorio::mostrarVecinos()
-{
-    for (int i = 0; i < territoriosVecinos.size(); i++)
-    {
-        std::cout<<i+1<<". "<<territoriosVecinos[i]<<std::endl;
-    }
-}

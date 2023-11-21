@@ -11,7 +11,6 @@ class Continente {
 public:
     Continente(std::string nNombre);
     std::string obtenerNombre();
-    void establecerNombre( std::string nuevoNombre);
     void ocuparTerritorio(Ficha ficha, int nTerritorio, std::string nombreJugador); 
     void AddTerritorio( std::string nombre, int _id);
     //void MoverFicha(int territorio1, int territorio2); 
@@ -24,8 +23,8 @@ public:
     int getFichasEnTerritorio(int indice);
     int getIdTerritorio(int indice);
     bool continenteOcupado(std::string nombreJugador);
-    void agregarVecino(int territorio, std::string nombreVecino);
-    std::vector<std::string> mostrarVecinos(int territorio);
+   // void agregarVecino(int territorio, std::string nombreVecino);
+    //std::vector<std::string> mostrarVecinos(int territorio);
     void eliminarFichaTerritorio(int terri);
 private:
     std::string nombre;

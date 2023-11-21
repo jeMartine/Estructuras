@@ -1,83 +1,42 @@
-territorio_noroccidental kamchatka alberta
-vc
-alaska territorio_noroccidental ontario estados_unidos_occidentales
-vc
-estados_unidos_occidentales estados_unidos_orientales colombia
-vc
-estados_unidos_occidentales ontario quebec america_central 
-vc
-territorio_noroccidental ontario quebec islandia 
-vc
-alaska alberta ontario groenlandia 
-vc
-territorio_noroccidental alberta estados_unidos_occidentales estados_unidos_orientales quebec
-vc
-groenlandia ontario estados_unidos_orientales
-vc
-alberta ontario estados_unidos_orientales america_central
-cc
-peru brasil
-vc
-colombia peru argentina africa_del_norte
-vc
-colombia brasil argentina
-vc
-peru brasil america_central
-cc
-europa_occidental europa_del_norte escandinavia islandia
-vc
-groenlandia escandinavia gran_bretana
-vc
-escandinavia gran_bretana europa_occidental europa_del_sur ucrania
-vc
-islandia gran_bretana europa_del_norte ucrania
-vc
-ucrania europa_del_norte europa_occidental africa_del_norte egipto medio_oriente
-vc
-escandinavia europa_del_norte europa_del_sur medio_oriente Aafghanistan ural
-vc
-gran_bretana europa_del_norte europa_del_sur africa_del_norte
-cc
-africa_del_norte africa_oriental africa_del_sur
-vc
-egipto africa_del_norte congo africa_del_sur madagascar
-vc
-africa_del_norte africa_oriental europa_del_sur medio_oriente
-vc
-africa_oriental africa_del_sur
-vc
-brasil congo africa_oriental egipto europa_occidental europa_del_sur
-vc
-congo africa_oriental madagascar
-cc
-ural china india medio_oriente ucrania
-vc
-mongolia Aafghanistan siberia ural india siam
-vc
-medio_oriente Aafghanistan china siam
-vc
-kamchatka yakutsk siberia mongolia
-vc
-kamchatka mongolia
-vc
-yakutsk irkutsk mongolia japon alaska
-vc
-Aafghanistan india ucrania europa_del_sur egipto
-vc
-japon kamchatka irkutsk siberia china
-vc
-china india indonesia
-vc
-yakutsk irkutsk mongolia china ural
-vc
-siberia Aafghanistan ucrania
-vc
-kamchatka irkutsk siberia
-cc
-australia_occidental nueva_guinea
-vc
-nueva_guinea australia_occidental siam
-vc
-indonesia australia_occidental australia_oriental
-vc
-indonesia nueva_guinea australia_oriental
+1:2,6,32
+2:1,6,7,9
+3:4,9,13
+4:3,7,8,9
+5:6,7,8,15
+6:1,2,5,7
+7:2,5,6,8
+8:4,5,7
+9:2,3,4,7
+10:11,12
+11:10,12,13,25
+12:10,11,13
+13:3,11,12
+14:15,16,17,18,19
+15:5,14,16
+16:14,17,18,19,20
+17:14,15,16,19
+18:16,19,20,23,25
+19:16,17,18,27,33,37
+20:14,16,18,25
+21:22,25,26
+22:21,23,24,25,26
+23:18,22,25,33
+24:22,26
+25:11,18,20,21,22,23
+26:21,22,24
+27:17,28,29,33,37
+28:27,29,34,35,36
+29:28,33,35
+30:32,36,37
+31:32,34
+32:1,30,34
+33:19,24,27,29
+34:30,31,32
+35:28,29,40
+36:30,34,37,38
+37:19,27,36
+38:30,32,36
+39:41,42
+40:35,41,42
+41:39,40
+42:39,40,41

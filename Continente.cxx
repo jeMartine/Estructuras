@@ -12,17 +12,7 @@ std::string Continente::obtenerNombre()
   return nombre;
 }
 
-/*
-//get color
-std::string Continente::obtenerColor() {
-    return color;
-}
-//set color
-void Continente::establecerColor( std::string nuevoColor) {
-    color = nuevoColor;
 
-}
-*/
 // la parte ocupar el territorio
 void Continente::ocuparTerritorio(Ficha ficha, int nTerritorio, std::string nombreJugador)
 {
@@ -91,16 +81,16 @@ int Continente::getFichasEnTerritorio(int indice)
   return territorios[indice].GetQFichas();
 }
 
-// agrega el nombre de un pais vecino a un territorio
-void Continente::agregarVecino(int territorio, std::string nombreVecino)
-{
-  territorios[territorio].agregarVecino(nombreVecino);
-}
+// // agrega el nombre de un pais vecino a un territorio
+// void Continente::agregarVecino(int territorio, std::string nombreVecino)
+// {
+//   territorios[territorio].agregarVecino(nombreVecino);
+// }
 
-std::vector<std::string> Continente::mostrarVecinos(int territorio)
-{
-  return territorios[territorio].getVecinos();
-}
+// std::vector<std::string> Continente::mostrarVecinos(int territorio)
+// {
+//   return territorios[territorio].getVecinos();
+// }
 
 //elimina una ficha de un territorio
 void Continente::eliminarFichaTerritorio(int terri){

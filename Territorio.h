@@ -19,9 +19,6 @@ public:
     std::string getNombre();
     std::string getReclamado();
     int getIdterritorio();
-    void agregarVecino(std::string tNombre);
-    std::vector<std::string> getVecinos();
-    void mostrarVecinos();
 
 private:
     std::string nombre;

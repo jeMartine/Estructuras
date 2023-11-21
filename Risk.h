@@ -58,11 +58,11 @@ public:
     Carta getCarta();
     int numeroAleatorio(int minimo, int maximo);
     void agregarTerritorio(int continente, std::string nombreTerritorio, int id);
-    void agregarVecinoTerritorio(int continente, int territorio, std::string nombreVecino);
+   // void agregarVecinoTerritorio(int continente, int territorio, std::string nombreVecino);
 
-    void mostrarVecinosTerritorio(int conti, int terri);
+   // void mostrarVecinosTerritorio(int conti, int terri);
     std::string buscarFichasTerritorio(std::string terri);
-    bool validarDefensa(int indContiente, int indterritorio, std::string territorio);
+    //bool validarDefensa(int indContiente, int indterritorio, std::string territorio);
     int fichasTerritorio(std::string terri);
     bool deleteFichaTerritorio(std::string terri);
     bool conquistarTerritorio(std::string terri, std::string nombreJugador);
