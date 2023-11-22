@@ -63,10 +63,6 @@ int main()
   poblarTerritorios(&risk, "territorios.txt");
   poblarVecinos(relaciones, "vecinosTerritorios.txt");
 
-  vector<int> lista = relaciones[1];
-  for (int i = 0; i < lista.size(); i++)
-    cout << lista[i] << endl;
-
   // matriz con
   // guarda la cadena ingresada por el usuario
   string respuesta;
@@ -97,38 +93,47 @@ int main()
     // se debe identificar si es txt o binario.
     case 1:
     {
-      risk.iniciarPartida();
-      string nombreArchivo = separarEspacio(respuesta, true);
-      string ultimosCuatro;
-      // Obtener la longitud del string
-      size_t longitud = nombreArchivo.length();
 
-      // Leer los últimos 4 caracteres
-      if (longitud >= 4)
+      if (risk.estadoPartida())
       {
-        ultimosCuatro = nombreArchivo.substr(longitud - 4);
+        cout << "-** Esta partida ya ha sido inicializada **-\n";
       }
       else
       {
-        cout << "El nombre del archivo es muy corto." << endl;
-      }
 
-      if (ultimosCuatro == ".txt")
-      {
-        poblarJuego(&risk, leerArchivo(nombreArchivo));
-        cout << "Se ha restaurado la partida " << nombreArchivo << " :)\n";
-      }
-      else if (ultimosCuatro == ".bin")
-      {
-        cout << "Archivo con extension .bin" << endl;
-        cargar_arbol(nombreArchivo);
-        string archDeco = "Decodificado.txt";
-        poblarJuego(&risk, leerArchivo(archDeco));
-        cout << "Se ha restaurado la partida " << nombreArchivo << " :)\n";
-      }
-      else
-      {
-        cout << "Debe ingresar un formato valido (.txt o .bin)\n";
+        risk.iniciarPartida();
+        string nombreArchivo = separarEspacio(respuesta, true);
+        string ultimosCuatro;
+        // Obtener la longitud del string
+        size_t longitud = nombreArchivo.length();
+
+        // Leer los últimos 4 caracteres
+        if (longitud >= 4)
+        {
+          ultimosCuatro = nombreArchivo.substr(longitud - 4);
+        }
+        else
+        {
+          cout << "El nombre del archivo no es valido." << endl;
+        }
+
+        if (ultimosCuatro == ".txt")
+        {
+          poblarJuego(&risk, leerArchivo(nombreArchivo));
+          cout << "Se ha restaurado la partida " << nombreArchivo << " :)\n";
+        }
+        else if (ultimosCuatro == ".bin")
+        {
+          cout << "Archivo con extension .bin" << endl;
+          cargar_arbol(nombreArchivo);
+          string archDeco = "Decodificado.txt";
+          poblarJuego(&risk, leerArchivo(archDeco));
+          cout << "Se ha restaurado la partida " << nombreArchivo << " :)\n";
+        }
+        else
+        {
+          cout << "Debe ingresar un formato valido (.txt o .bin)\n";
+        }
       }
     }
     break;
@@ -1140,7 +1145,7 @@ void cargar_arbol(string nombreArchivo)
   map<int, int> frecuencias = resultado.first;
   string strCodificada = resultado.second;
   arbol.reconstruirArbol(frecuencias);
-  cout << "Árbol de Huffman cargado desde archivo binario.\n";
+  cout << "Arbol de Huffman cargado desde archivo binario.\n";
   cout << "Decodificando...\n";
   arbol.decodificar(strCodificada);
 }
@@ -1216,7 +1221,8 @@ void conquistaBarata(Risk *risk, map<int, vector<int>> &relaciones)
   Grafo<string> grafo;
   map<int, vector<int>>::iterator it;
   vector<int> propios;
-  vector<Territorio> terris;
+  vector<int> otros;
+  vector<Territorio> paises;
   bool estado = false;
 
   // agregar vertices (nombres de los territorios) en el grafo
@@ -1251,21 +1257,58 @@ void conquistaBarata(Risk *risk, map<int, vector<int>> &relaciones)
       if (continentes[i].getTerritorio(j).getReclamado() == risk->getNameJugadorEnTurno())
       {
         propios.push_back(continentes[i].getTerritorio(j).getId());
-        terris.push_back(continentes[i].getTerritorio(j));
-
-        // cout<<continentes[i].getTerritorio(j).getReclamado()<<" : "<<continentes[i].getTerritorio(j).getNombre()<<" id: "<<continentes[i].getTerritorio(j).getId()<<endl;
-        
+        paises.push_back(continentes[i].getTerritorio(j));
+      }
+      else
+      {
+        otros.push_back(continentes[i].getTerritorio(j).getId());
+        paises.push_back(continentes[i].getTerritorio(j));
       }
     }
   }
 
-  if (estado)
+  // Recorrer todo
+
+  int pesoMinimo = 10000;
+  vector<string> caminoMinimo;
+  string origenMinimo, destinoMinimo;
+
+  for (int i = 0; i < propios.size(); i++)
   {
-    cout << "El pais " << " te pertence\n";
+    for (int j = 0; j < otros.size(); j++)
+    {
+      vector<string> caminoActual;
+
+      int pesoActual = grafo.FloydWarshall(paises[propios[i]].getNombre(), paises[otros[i]].getNombre(), caminoActual);
+
+      if (pesoActual < pesoMinimo)
+      {
+        pesoMinimo = pesoActual;
+        caminoMinimo = caminoActual;
+        origenMinimo = paises[propios[i]].getNombre();
+        destinoMinimo = paises[otros[j]].getNombre();
+      }
+    }
   }
+
+  // Imprimir el camino más corto
+  if (pesoMinimo != INFINITO)
+  {
+    cout << "El camino más corto es desde " << origenMinimo << " hasta " << destinoMinimo << endl;
+    cout << " Debe conquistar " << pesoMinimo << " unidades de ejército." << endl;
+    for (int i = 0; i < caminoMinimo.size() - 1; ++i)
+    {
+      cout << caminoMinimo[i] << " --> " << caminoMinimo[i + 1];
+      if (i < caminoMinimo.size() - 2)
+      {
+        cout << ", ";
+      }
+    }
+    cout << endl;
+  }
+
   else
   {
-    cout << risk->getNameJugadorEnTurno() << " para conquistar el territorio <" << pais << "> ";
-    grafo.recorridoEnAnchura(pais, propios);
+    cout << "No hay caminos disponibles." << endl;
   }
 }
