@@ -29,12 +29,6 @@ std::string Territorio::getReclamado()
     return reclamado;
 }
 
-// contar las fichas
-int Territorio::ContarFichas(std::string jugador)
-{
-    // Implementación para contar las fichas del jugador
-    return 0;
-}
 // get de cantidad de fichas
 int Territorio::GetQFichas()
 {

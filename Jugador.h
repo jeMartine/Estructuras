@@ -24,9 +24,7 @@ public:
     std::string color;
     std::vector<Carta> cartas;
     std::vector<Ficha> fichas;
-    std::string nombreJugador;
-    Territorio* territorioActual;
-    std::vector<Jugador> jugadores;
+    std::string nombreJugador;    
     int qTerritorios;
 };
 

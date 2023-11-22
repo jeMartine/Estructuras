@@ -33,7 +33,7 @@ void inicializarJuego(Risk *risk);
 void fortificar(Risk *risk, bool inicializar);
 void turno(map<int, vector<int>> &relaciones, Risk *risk);
 
-pair< map<int,int>, string > leerBinario(const string& nombreArchivo);
+pair<map<int, int>, string> leerBinario(const string &nombreArchivo);
 void crearCartas(Risk *risk, const std::string &filename);
 void poblarTerritorios(Risk *risk, const std::string &filename);
 void poblarVecinos(map<int, vector<int>> &relaciones, const std::string &filename);
@@ -49,6 +49,7 @@ bool esVecino(vector<Territorio> vecinos, string nombre);
 void costoConquista(Risk *risk, map<int, vector<int>> &relaciones, string pais);
 void construir_arbol(string nombreArchivo, string nombreArchivoBinario);
 void cargar_arbol(string nombreArchivo);
+void conquistaBarata(Risk *risk, map<int, vector<int>> &relaciones);
 
 int main()
 {
@@ -82,6 +83,8 @@ int main()
   // indica si hay algún ganador
   int ganador = -1;
   string adicional = "";
+  vector<Continente> continentes;
+  bool existe = false;
 
   do
   {
@@ -104,7 +107,6 @@ int main()
       if (longitud >= 4)
       {
         ultimosCuatro = nombreArchivo.substr(longitud - 4);
-       
       }
       else
       {
@@ -114,22 +116,20 @@ int main()
       if (ultimosCuatro == ".txt")
       {
         poblarJuego(&risk, leerArchivo(nombreArchivo));
-        cout<<"Se ha restaurado la partida "<<nombreArchivo<<" :)\n";
+        cout << "Se ha restaurado la partida " << nombreArchivo << " :)\n";
       }
       else if (ultimosCuatro == ".bin")
       {
         cout << "Archivo con extension .bin" << endl;
         cargar_arbol(nombreArchivo);
-        string archDeco="Decodificado.txt";
+        string archDeco = "Decodificado.txt";
         poblarJuego(&risk, leerArchivo(archDeco));
-        cout<<"Se ha restaurado la partida "<<nombreArchivo<<" :)\n";
+        cout << "Se ha restaurado la partida " << nombreArchivo << " :)\n";
       }
       else
       {
         cout << "Debe ingresar un formato valido (.txt o .bin)\n";
       }
-        
-
     }
     break;
     // inicializar
@@ -179,39 +179,32 @@ int main()
     {
       string nombreArchivo = separarEspacio(respuesta, true);
       nombreArchivo += ".txt";
-      // risk.guardarPartida();
       crearArchivo(nombreArchivo, risk.guardarPartida());
     }
     break;
-
       // guardar_comprimido <nombre_archivo>
 
     case 6:
     {
-      // string nombreArchivo = separarEspacio(respuesta, true);
-      // map<char, int> frecuencia = contarFrecuencia(nombreArchivo);
 
-      // std::cout << "Frecuencia de caracteres:" << std::endl;
-      // for (const auto &par : frecuencia)
-      // {
-      //   std::cout << par.first << ": " << par.second << std::endl;
-      // }
-      // cout << "Caracteres por orden de menor frecuencia:" << endl;
-      // while (!frecuencia.empty())
-      // {
-      //   char caracter = MenorFrecuencia(frecuencia);
-      //   cout << "Caracter: " << caracter << ", Frecuencia: " << frecuencia[caracter] << endl;
-      // }
-
-      adicional = separarEspacio(respuesta, true);
-      adicional += ".bin";
-      crearArchivo("saveBin.txt", risk.guardarPartida());
-      construir_arbol("saveBin.txt", adicional);
+      if (!risk.estadoPartida())
+      {
+        cout << "-** Esta partida no ha sido inicializada correctamente **-\n";
+      }
+      else
+      {
+        adicional = separarEspacio(respuesta, true);
+        adicional += ".bin";
+        crearArchivo("saveBin.txt", risk.guardarPartida());
+        construir_arbol("saveBin.txt", adicional);
+      }
     }
     break;
       // costo_conquista <territorio>
     case 7:
       adicional = separarEspacio(respuesta, true);
+      continentes = risk.getContinentes();
+      existe = false;
       if (!risk.estadoPartida())
       {
         cout << "-** Esta partida no ha sido inicializada correctamente **-\n";
@@ -222,14 +215,39 @@ int main()
       }
       else
       {
-        costoConquista(&risk, relaciones, adicional);
+        for (int i = 0; i < continentes.size(); i++)
+        {
+          for (int j = 0; j < continentes[i].cantidadTerritorios(); j++)
+          {
+            if (continentes[i].getNombreTerritorio(j) == adicional)
+            {
+              existe = true;
+              costoConquista(&risk, relaciones, adicional);
+            }
+          }
+        }
+      }
+      if (!existe)
+      {
+        cout << "\n-** Nombre de territorio no valido **-\n\n";
       }
 
       break;
       // conquista_mas_barata
     case 8:
-      cout << "comando exitoso\n"
-           << "conquista_mas_barata\n";
+      if (!risk.estadoPartida())
+      {
+        cout << "-** Esta partida no ha sido inicializada correctamente **-\n";
+      }
+      else if (risk.estadoGanador())
+      {
+        cout << "-** Esta partida ya tuvo un ganador **-\n";
+      }
+      else
+      {
+        conquistaBarata(&risk, relaciones);
+      }
+
       break;
 
     case 9:
@@ -264,50 +282,48 @@ int main()
 
 // permite crear un archivo
 
-pair< map<int,int>, string > leerBinario(const string& nombreArchivo) 
+pair<map<int, int>, string> leerBinario(const string &nombreArchivo)
 {
-    ifstream archivo(nombreArchivo, ios::binary);
+  ifstream archivo(nombreArchivo, ios::binary);
 
-    //Guarda toda la información del archivo en un string
-    string str((istreambuf_iterator<char>(archivo)), istreambuf_iterator<char>());
+  // Guarda toda la información del archivo en un string
+  string str((istreambuf_iterator<char>(archivo)), istreambuf_iterator<char>());
 
-    //n
-    string n = str.substr(0, 16);
-    bitset<16> twoByteRepresentation(n);
-    int value = twoByteRepresentation.to_ulong();
-    //cout << "n: " << value << endl;
-    str.erase(0, 16);
+  // n
+  string n = str.substr(0, 16);
+  bitset<16> twoByteRepresentation(n);
+  int value = twoByteRepresentation.to_ulong();
+  // cout << "n: " << value << endl;
+  str.erase(0, 16);
 
-    //ci y fi
-    map<int, int> frecuencias;
-    for (int i = 0; i < value; i++) {
-        string ascii = str.substr(0, 8);
-        bitset<8> asciiBit(ascii);
-        int asciiInt = asciiBit.to_ulong();
-        str.erase(0, 8);
+  // ci y fi
+  map<int, int> frecuencias;
+  for (int i = 0; i < value; i++)
+  {
+    string ascii = str.substr(0, 8);
+    bitset<8> asciiBit(ascii);
+    int asciiInt = asciiBit.to_ulong();
+    str.erase(0, 8);
 
-        string freq = str.substr(0, 64);
-        bitset<64> freqBit(freq);
-        int freqInt = freqBit.to_ulong();
-        str.erase(0, 64);
-
-        frecuencias[asciiInt] = freqInt;
-    }
-
-    //w
-    string w = str.substr(0, 64);
-    bitset<64> wBit(w);
-    int wInt = wBit.to_ulong();
-    //cout << "w: " << wInt << endl;
+    string freq = str.substr(0, 64);
+    bitset<64> freqBit(freq);
+    int freqInt = freqBit.to_ulong();
     str.erase(0, 64);
 
+    frecuencias[asciiInt] = freqInt;
+  }
 
+  // w
+  string w = str.substr(0, 64);
+  bitset<64> wBit(w);
+  int wInt = wBit.to_ulong();
+  // cout << "w: " << wInt << endl;
+  str.erase(0, 64);
 
-    archivo.close();
+  archivo.close();
 
-    return make_pair(frecuencias, str);
+  return make_pair(frecuencias, str);
 }
-
 
 void crearArchivo(std::string nombreArchivo, std::string contenido)
 {
@@ -660,15 +676,21 @@ void fortificar(Risk *risk, bool inicializar)
 
 void turno(map<int, vector<int>> &relaciones, Risk *risk)
 {
+  string ataque = "";
   risk->nuevasTropasTerritorio();
   risk->nuevasTropasContiente();
   if (risk->getFichasJugadorEnTurno() > 0)
     fortificar(risk, false);
   else
     cout << " No se puede fortificar!\n  Fichas insuficientes!\n";
-  atacar(relaciones, risk);
 
-  risk->turnoJugado();
+  cout << "¿Desea atacar?\n1. si, \n2. no.";
+  ataque = ingresarComando();
+
+  if (ataque == "Si" || ataque == "si" || ataque == "1")
+    atacar(relaciones, risk);
+  else
+    risk->turnoJugado();
 }
 
 void atacar(map<int, vector<int>> &relaciones, Risk *risk)
@@ -1099,9 +1121,10 @@ void construir_arbol(string nombreArchivo, string nombreArchivoBinario)
   cout << "Arbol de Huffman creado con exito." << endl;
 
   string strCodificada;
-  for (char ch : texto)
+  for (std::size_t i = 0; i < texto.length(); ++i)
   {
-    strCodificada += arbol.codigoHuffman[ch];
+    char ch = texto[i];
+    strCodificada += arbol.getCodigohuffman(ch);
   }
 
   arbol.guardarEnArchivoBinario(strCodificada, nombreArchivoBinario);
@@ -1126,6 +1149,123 @@ void cargar_arbol(string nombreArchivo)
 
 void costoConquista(Risk *risk, map<int, vector<int>> &relaciones, string pais)
 {
+  std::vector<Continente> continentes = risk->getContinentes();
+  Grafo<string> grafo;
+  map<int, vector<int>>::iterator it;
+  vector<int> propios;
+  vector<Territorio> terris;
+  bool estado = false;
 
-  cout << "Para conquistar el territorio " << pais << ", debe atacar desde <territorio_1>,pasando por los territorios <territorio_2>, <territorio_3>, ..., <territorio_m>. Debe conquistar <n> unidades de ejército.";
+  // agregar vertices (nombres de los territorios) en el grafo
+  for (int i = 0; i < continentes.size(); i++)
+  {
+    for (int j = 0; j < continentes[i].cantidadTerritorios(); j++)
+    {
+      grafo.agregarNodo(continentes[i].getNombreTerritorio(j));
+    }
+  }
+
+  // agregar aristas
+  for (it = relaciones.begin(); it != relaciones.end(); ++it)
+  {
+    int nodo = it->first;
+    vector<int> vecinos = it->second;
+
+    for (int i = 0; i < vecinos.size(); i++)
+    {
+      int x = vecinos[i];
+      // id del pais de origen, destino, costo
+      // cout<<"X: "<<x<<" Nodo: "<<nodo<<" c:"<<risk->buscarId(nodo).getNombre()<<", "<<risk->buscarId(x).getNombre()<<", "<< risk->buscarId(x).GetQFichas()<<endl;
+      grafo.agregarArista(risk->buscarId(nodo).getNombre(), risk->buscarId(x).getNombre(), risk->buscarId(x).GetQFichas());
+    }
+  }
+
+  // vector para almacenar los id de los paises que le pertenecen al jugador actual
+  for (int i = 0; i < continentes.size(); i++)
+  {
+    for (int j = 0; j < continentes[i].cantidadTerritorios(); j++)
+    {
+      if (continentes[i].getTerritorio(j).getReclamado() == risk->getNameJugadorEnTurno())
+      {
+        propios.push_back(continentes[i].getTerritorio(j).getId());
+        terris.push_back(continentes[i].getTerritorio(j));
+
+        // cout<<continentes[i].getTerritorio(j).getReclamado()<<" : "<<continentes[i].getTerritorio(j).getNombre()<<" id: "<<continentes[i].getTerritorio(j).getId()<<endl;
+        if (continentes[i].getTerritorio(j).getNombre() == pais)
+        {
+          estado = true;
+        }
+      }
+    }
+  }
+
+  if (estado)
+  {
+    cout << "El pais " << pais << " te pertence\n";
+  }
+  else
+  {
+    cout << risk->getNameJugadorEnTurno() << " para conquistar el territorio <" << pais << "> ";
+    grafo.recorridoEnAnchura(pais, propios);
+  }
+}
+
+void conquistaBarata(Risk *risk, map<int, vector<int>> &relaciones)
+{
+  std::vector<Continente> continentes = risk->getContinentes();
+  Grafo<string> grafo;
+  map<int, vector<int>>::iterator it;
+  vector<int> propios;
+  vector<Territorio> terris;
+  bool estado = false;
+
+  // agregar vertices (nombres de los territorios) en el grafo
+  for (int i = 0; i < continentes.size(); i++)
+  {
+    for (int j = 0; j < continentes[i].cantidadTerritorios(); j++)
+    {
+      grafo.agregarNodo(continentes[i].getNombreTerritorio(j));
+    }
+  }
+
+  // agregar aristas
+  for (it = relaciones.begin(); it != relaciones.end(); ++it)
+  {
+    int nodo = it->first;
+    vector<int> vecinos = it->second;
+
+    for (int i = 0; i < vecinos.size(); i++)
+    {
+      int x = vecinos[i];
+      // id del pais de origen, destino, costo
+      // cout<<"X: "<<x<<" Nodo: "<<nodo<<" c:"<<risk->buscarId(nodo).getNombre()<<", "<<risk->buscarId(x).getNombre()<<", "<< risk->buscarId(x).GetQFichas()<<endl;
+      grafo.agregarArista(risk->buscarId(nodo).getNombre(), risk->buscarId(x).getNombre(), risk->buscarId(x).GetQFichas());
+    }
+  }
+
+  // vector para almacenar los id de los paises que le pertenecen al jugador actual
+  for (int i = 0; i < continentes.size(); i++)
+  {
+    for (int j = 0; j < continentes[i].cantidadTerritorios(); j++)
+    {
+      if (continentes[i].getTerritorio(j).getReclamado() == risk->getNameJugadorEnTurno())
+      {
+        propios.push_back(continentes[i].getTerritorio(j).getId());
+        terris.push_back(continentes[i].getTerritorio(j));
+
+        // cout<<continentes[i].getTerritorio(j).getReclamado()<<" : "<<continentes[i].getTerritorio(j).getNombre()<<" id: "<<continentes[i].getTerritorio(j).getId()<<endl;
+        
+      }
+    }
+  }
+
+  if (estado)
+  {
+    cout << "El pais " << " te pertence\n";
+  }
+  else
+  {
+    cout << risk->getNameJugadorEnTurno() << " para conquistar el territorio <" << pais << "> ";
+    grafo.recorridoEnAnchura(pais, propios);
+  }
 }

@@ -6,6 +6,8 @@
 #include <queue>
 #include <iostream>
 #include <unordered_set>
+#include <algorithm>
+
 using namespace std;
 
 const int INFINITO = 1000000;
@@ -16,7 +18,7 @@ class Grafo {
 public:
     void agregarNodo(const T& nodo);
     void agregarArista(const T& origen, const T& destino, int peso);
-    void recorridoMasCorto(const T& inicio, const T& fin);
+    void recorridoMasCorto(const T& inicio, const T& fin, map<int, string> &textCaminos);
     void recorridoEnAnchura(const T& inicio, vector<int> propios);
     int FloydWarshall(const T& origen, const T& destino, vector<T>& caminoMinimo);
  

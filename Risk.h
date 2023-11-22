@@ -48,6 +48,7 @@ public:
     
     void turnosEnCero();
 
+
     std::string guardarPartida();
     std::string territoriosJugadorArch(int iJugador);
 
@@ -76,8 +77,10 @@ public:
     void agregarCartaJugador(std::string terri, std::string tropa, int indJugador);
     int idTerritorio(int iContinente, std::string territorio);
     Territorio buscarId(int idTerri);
-  
+    
 
+    //...
+    std::vector<Continente> getContinentes();
 private:
     std::vector<Jugador> jugadores;
     std::vector<Carta> cartas;

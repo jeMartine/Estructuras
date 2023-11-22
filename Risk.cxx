@@ -676,3 +676,7 @@ void Risk::agregarCartaJugador(std::string terri, std::string tropa, int indJuga
   Carta aux(terri, tropa);
   jugadores[indJugador].agregarCarta(aux);
 }
+
+std::vector<Continente> Risk::getContinentes(){
+  return continentes;
+}

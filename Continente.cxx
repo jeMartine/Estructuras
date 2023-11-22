@@ -90,19 +90,11 @@ int Continente::getFichasEnTerritorio(int indice)
   return territorios[indice].GetQFichas();
 }
 
-// // agrega el nombre de un pais vecino a un territorio
-// void Continente::agregarVecino(int territorio, std::string nombreVecino)
-// {
-//   territorios[territorio].agregarVecino(nombreVecino);
-// }
-
-// std::vector<std::string> Continente::mostrarVecinos(int territorio)
-// {
-//   return territorios[territorio].getVecinos();
-// }
-
 //elimina una ficha de un territorio
 void Continente::eliminarFichaTerritorio(int terri){
   territorios[terri].deleteFicha();
 }
 
+Territorio Continente::getTerritorio(int ind){
+  return territorios[ind];
+}
